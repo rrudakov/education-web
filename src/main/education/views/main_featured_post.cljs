@@ -41,7 +41,7 @@
   [{:keys [post]}]
   (fn [{:keys [classes]}]
     [:> mui/Paper {:class (.-mainFeaturedPost classes)
-                   :style {:background-image (str "url(" (:image post) ")")}}
+                   :style {:background-image (str "url(" (:featured_image post) ")")}}
      [:div {:class (.-overlay classes)}]
      [:> mui/Grid {:container true}
       [:> mui/Grid {:item true :md 6}
@@ -52,9 +52,9 @@
                             :gutterBottom true} (:title post)]
         [:> mui/Typography {:variant   :h5
                             :color     :inherit
-                            :paragraph true} (:description post)]
+                            :paragraph true} "No post description..."]
         [:> mui/Link {:variant :subtitle1
-                      :href    "#"} (:link-text post)]]]]]))
+                      :href    "#"} "Continue reading..."]]]]]))
 
 (defn main-featured-post
   "Main featured post component with custom styles."

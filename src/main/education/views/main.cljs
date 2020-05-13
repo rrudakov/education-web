@@ -1,9 +1,11 @@
 (ns education.views.main
   (:require ["@material-ui/core" :as mui :refer [createMuiTheme ThemeProvider]]
+            [education.subs.main :as subs]
             [education.views.featured-post :refer [featured-post]]
             [education.views.footer :refer [footer]]
             [education.views.header :refer [header]]
-            [education.views.main-featured-post :refer [main-featured-post]]))
+            [education.views.main-featured-post :refer [main-featured-post]]
+            [re-frame.core :as rf]))
 
 (def sections
   "Sections for main navigation."
@@ -57,7 +59,7 @@
     [header {:title    "Blog"
              :sections sections}]
     [:main
-     [main-featured-post main-featured-post-item]
+     [main-featured-post @(rf/subscribe [::subs/main-featured-article])]
      [:> mui/Grid {:container true
                    :spacing   4}
       (for [post featured-posts]
@@ -66,7 +68,12 @@
      [:> mui/Grid {:container true
                    :spacing   5}
       [:> mui/Grid {:item true :xs 12 :md 6}
-       [:> mui/Typography {:variant :h6 :gutterBottom true} "From the firehouse..."]]]]]
+       [:> mui/Typography {:variant :h6 :gutterBottom true} "From the firehouse..."]
+       (for [post @(rf/subscribe [::subs/articles])]
+         ^{:key (:id post)}
+         [:div
+          [:h1 (:title post)]
+          [:p (:updated_on post)]])]]]]
    [footer
     {:description "Some description"
      :title       "Footer title"}]])
