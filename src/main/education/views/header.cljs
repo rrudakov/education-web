@@ -8,12 +8,12 @@
   "Define custom CSS for header."
   [theme]
   (clj->js
-   {:toolbar          {:borderBottom (str "1px solid " (.. theme -palette -divider))}
+   {:toolbar          {:border-bottom (str "1px solid " (.. theme -palette -divider))}
     :toolbarTitle     {:flex 1}
-    :toolbarSecondary {:justifyContent "space-between"
-                       :overflowX      "auto"}
-    :toolbarLink      {:padding    ((.. theme -spacing) 1)
-                       :flexShrink 0}}))
+    :toolbarSecondary {:justify-content :space-between
+                       :overflow-x      :auto}
+    :toolbarLink      {:padding     ((.. theme -spacing) 1)
+                       :flex-shrink 0}}))
 
 (def with-header-styles
   "Wrapper for element to use custom styles."
