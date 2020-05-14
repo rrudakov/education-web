@@ -2,8 +2,7 @@
   (:require ["@material-ui/core" :as mui]
             ["@material-ui/core/styles" :refer [withStyles]]
             [goog.object :as g]
-            [reagent.core :as r]
-            ))
+            [reagent.core :as r]))
 
 (defn- main-featured-post-styles
   "Define custom CSS for main featured post."

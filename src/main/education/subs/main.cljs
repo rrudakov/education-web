@@ -2,16 +2,6 @@
   (:require [re-frame.core :as rf]))
 
 (rf/reg-sub
- ::fetching
+ ::active-panel
  (fn [db _]
-   (:fetching db)))
-
-(rf/reg-sub
- ::articles
- (fn [db _]
-   (:articles db)))
-
-(rf/reg-sub
- ::main-featured-article
- (fn [db _]
-   (:main-featured-article db)))
+   (:active-panel db)))

@@ -57,3 +57,9 @@
  [check-spec-interceptor]
  (fn [db _]
    (assoc db :fetching true)))
+
+(rf/reg-event-db
+ ::set-active-panel
+ [check-spec-interceptor]
+ (fn [db [_ panel]]
+   (assoc db :active-panel panel)))

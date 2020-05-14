@@ -1,5 +1,6 @@
 (ns education.core
   (:require [education.events.main :as events]
+            [education.routes :refer [app-routes]]
             [education.views.main :refer [main-panel]]
             [re-frame.core :as rf]
             [reagent.dom :as rdom]))
@@ -11,7 +12,7 @@
     (rdom/render [main-panel] root-el)))
 
 (defn init []
-  ;; (routes/app-routes)
+  (app-routes)
   (rf/dispatch-sync [::events/initialize-db])
   (rf/dispatch [::events/fetch-articles-list])
   (mount-root))

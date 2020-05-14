@@ -1,8 +1,9 @@
 (ns education.views.header
-  (:require [reagent.core :as r]
-            ["@material-ui/core" :as mui]
+  (:require ["@material-ui/core" :as mui]
+            ["@material-ui/core/styles" :refer [withStyles]]
             ["@material-ui/icons/Search" :default SearchIcon]
-            ["@material-ui/core/styles" :refer [withStyles]]))
+            [education.routes :refer [url-for]]
+            [reagent.core :as r]))
 
 (defn header-styles
   "Define custom CSS for header."
@@ -34,7 +35,9 @@
                           :noWrap    true} title]
       [:> mui/IconButton [:> SearchIcon]]
       [:> mui/Button {:variant :outlined
-                      :size    :small} "Sign up"]]
+                      :size    :small
+                      :component :a
+                      :href (url-for :login)} "Sign up"]]
      [:> mui/Toolbar {:class     (.-toolbarSecondary classes)
                       :component :nav
                       :variant   :dense}
