@@ -1,4 +1,4 @@
-(ns education.views.featured-post
+(ns education.views.home.featured-post
   (:require [reagent.core :as r]
             ["@material-ui/core" :as mui]
             ["@material-ui/core/styles" :refer [withStyles]]))

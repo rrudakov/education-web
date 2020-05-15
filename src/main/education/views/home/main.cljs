@@ -1,8 +1,8 @@
-(ns education.views.home
+(ns education.views.home.main
   (:require ["@material-ui/core" :as mui]
             [education.subs.home :as subs]
-            [education.views.featured-post :refer [featured-post]]
-            [education.views.main-featured-post :refer [main-featured-post]]
+            [education.views.home.featured-post :refer [featured-post]]
+            [education.views.home.main-featured-post :refer [main-featured-post]]
             [re-frame.core :as rf]))
 
 (def featured-posts

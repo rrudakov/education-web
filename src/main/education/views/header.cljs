@@ -2,7 +2,9 @@
   (:require ["@material-ui/core" :as mui]
             ["@material-ui/core/styles" :refer [withStyles]]
             ["@material-ui/icons/Search" :default SearchIcon]
+            [education.events.signup :as signup-events]
             [education.routes :refer [url-for]]
+            [re-frame.core :as rf]
             [reagent.core :as r]))
 
 (defn header-styles
@@ -36,8 +38,7 @@
       [:> mui/IconButton [:> SearchIcon]]
       [:> mui/Button {:variant :outlined
                       :size    :small
-                      :component :a
-                      :href (url-for :login)} "Sign up"]]
+                      :onClick #(rf/dispatch [::signup-events/open-signup])} "Sign up"]]
      [:> mui/Toolbar {:class     (.-toolbarSecondary classes)
                       :component :nav
                       :variant   :dense}

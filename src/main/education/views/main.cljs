@@ -1,10 +1,11 @@
 (ns education.views.main
   (:require ["@material-ui/core" :as mui :refer [createMuiTheme ThemeProvider]]
+            [education.subs.main :as subs]
             [education.views.footer :refer [footer]]
             [education.views.header :refer [header]]
-            [education.views.home :refer [home-component]]
-            [re-frame.core :as rf]
-            [education.subs.main :as subs]))
+            [education.views.home.main :refer [home-component]]
+            [education.views.signup.main :refer [signup-dialog error-message]]
+            [re-frame.core :as rf]))
 
 (def sections
   "Sections for main navigation."
@@ -40,7 +41,6 @@
   [panel-name]
   (case panel-name
     :home [home-component]
-    :login [:div [:p "Login page"]]
     :article-index [:div]
     :article [:div]
     :not-found [:div]))
@@ -51,6 +51,8 @@
   [:> ThemeProvider {:theme (theme)}
    [:> mui/CssBaseline]
    [:> mui/Container {:maxWidth :lg}
+    [error-message]
+    [signup-dialog]
     [header {:title    "Blog"
              :sections sections}]
     [panels @(rf/subscribe [::subs/active-panel])]]

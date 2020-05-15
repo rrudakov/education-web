@@ -1,4 +1,4 @@
-(ns education.views.main-featured-post
+(ns education.views.home.main-featured-post
   (:require ["@material-ui/core" :as mui]
             ["@material-ui/core/styles" :refer [withStyles]]
             [goog.object :as g]

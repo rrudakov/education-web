@@ -1,17 +1,10 @@
 (ns education.events.main
   (:require [ajax.core :as ajax]
+            [cljs.spec.alpha :as s]
             day8.re-frame.http-fx
             [education.db.main :as db]
-            [re-frame.core :as rf]
-            [cljs.spec.alpha :as s]))
-
-(defn check-and-throw
-  "Throws an exception if `db` doesn't match the `spec`."
-  [spec db]
-  (when-not (s/valid? spec db)
-    (throw (ex-info (str "Spec check failed: " (s/explain-str spec db)) {}))))
-
-(def check-spec-interceptor (rf/after (partial check-and-throw ::db/db)))
+            [education.events.interceptors :refer [check-spec-interceptor]]
+            [re-frame.core :as rf]))
 
 (rf/reg-event-db
  ::initialize-db

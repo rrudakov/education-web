@@ -5,7 +5,6 @@
             [re-frame.core :as rf]))
 
 (def routes ["/" {"" :home
-                  "login" :login
                   "articles/" {"" :article-index
                               [:id] :article}
                   true :not-found}])
