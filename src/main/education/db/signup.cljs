@@ -6,8 +6,6 @@
 (s/def ::username string?)
 (s/def ::password string?)
 (s/def ::password_confirm string?)
-(s/def ::error_message (s/or :error nil?
-                             :success string?))
 (s/def ::token (s/or :logout nil?
                      :login string?))
 (s/def ::signup
@@ -17,7 +15,7 @@
            ::username
            ::password
            ::password_confirm]
-          :opt-un [::token ::error_message]))
+          :opt-un [::token]))
 (def default-db {:dialog-open false
                  :email ""
                  :username ""

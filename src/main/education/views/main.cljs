@@ -1,10 +1,11 @@
 (ns education.views.main
   (:require ["@material-ui/core" :as mui :refer [createMuiTheme ThemeProvider]]
             [education.subs.main :as subs]
+            [education.views.error-message :refer [error-message]]
             [education.views.footer :refer [footer]]
             [education.views.header :refer [header]]
             [education.views.home.main :refer [home-component]]
-            [education.views.signup.main :refer [signup-dialog error-message]]
+            [education.views.signup.main :refer [signup-dialog]]
             [re-frame.core :as rf]))
 
 (def sections

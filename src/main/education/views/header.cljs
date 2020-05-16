@@ -5,7 +5,8 @@
             [education.events.signup :as signup-events]
             [education.routes :refer [url-for]]
             [re-frame.core :as rf]
-            [reagent.core :as r]))
+            [reagent.core :as r]
+            [education.subs.signup :as subs]))
 
 (defn header-styles
   "Define custom CSS for header."
@@ -22,6 +23,18 @@
   "Wrapper for element to use custom styles."
   (withStyles header-styles))
 
+(defn auth-button
+  []
+  (let [signup @(rf/subscribe [::subs/signup])
+        logged-in? (not (nil? (:token signup)))]
+    (if logged-in?
+      [:> mui/Button {:variant :outlined
+                      :size    :small
+                      :onClick #(rf/dispatch [::signup-events/logout])} "Logout"]
+      [:> mui/Button {:variant :outlined
+                      :size    :small
+                      :onClick #(rf/dispatch [::signup-events/open-signup])} "Sign in"])))
+
 (defn header-component
   "Plain header component."
   [{:keys [sections title]}]
@@ -36,9 +49,7 @@
                           :align     :center
                           :noWrap    true} title]
       [:> mui/IconButton [:> SearchIcon]]
-      [:> mui/Button {:variant :outlined
-                      :size    :small
-                      :onClick #(rf/dispatch [::signup-events/open-signup])} "Sign up"]]
+      [auth-button]]
      [:> mui/Toolbar {:class     (.-toolbarSecondary classes)
                       :component :nav
                       :variant   :dense}

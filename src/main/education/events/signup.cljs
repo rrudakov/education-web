@@ -1,7 +1,10 @@
 (ns education.events.signup
   (:require [ajax.core :as ajax]
-            [education.db.signup :refer [token->local-storage remove-token-from-local-storage]]
+            [education.db.signup
+             :refer
+             [remove-token-from-local-storage token->local-storage]]
             [education.events.interceptors :refer [check-spec-interceptor]]
+            [education.events.main :as main-events]
             [re-frame.core :as rf]))
 
 (rf/reg-event-db
@@ -28,12 +31,6 @@
   (rf/path [:signup :password])]
  (fn [_ [_ new-password]] new-password))
 
-(rf/reg-event-db
- ::set-error-message
- [check-spec-interceptor
-  (rf/path [:signup :error_message])]
- (fn [_ [_ new-message]] new-message))
-
 (rf/reg-event-fx
  ::login
  [check-spec-interceptor]
@@ -51,19 +48,31 @@
 (def ->local-storage (rf/after token->local-storage))
 (def <-local-storage (rf/after remove-token-from-local-storage))
 
+(rf/reg-event-db
+ ::logout
+ [check-spec-interceptor
+  (rf/path :signup)
+  <-local-storage]
+ (fn [signup _]
+   (dissoc signup :token)))
+
 (rf/reg-event-fx
  ::login-successful
  [check-spec-interceptor
   (rf/path :signup)
   ->local-storage]
  (fn [{signup :db} [_ {:keys [token]}]]
-   {:db (assoc signup :token token)
+   {:db (-> signup
+            (assoc :token token)
+            (assoc :username "")
+            (assoc :password ""))
     :dispatch [::close-signup]}))
 
-(rf/reg-event-db
+(rf/reg-event-fx
  ::login-failed
  [check-spec-interceptor
   (rf/path :signup)
   <-local-storage]
- (fn [signup [_ {:keys [response]}]]
-   (assoc (dissoc signup :token) :error_message (:message response))))
+ (fn [{signup :db} [_ {:keys [response]}]]
+   {:db (dissoc signup :token)
+    :dispatch [::main-events/set-error-message (:message response)]}))

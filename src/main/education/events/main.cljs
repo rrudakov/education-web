@@ -11,6 +11,12 @@
  [check-spec-interceptor]
  (fn [_ _] db/db))
 
+(rf/reg-event-db
+ ::set-error-message
+ [check-spec-interceptor
+  (rf/path [:error_message])]
+ (fn [_ [_ new-error]] new-error))
+
 (rf/reg-event-fx
  ::fetch-articles-list
  [check-spec-interceptor]

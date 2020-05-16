@@ -3,6 +3,8 @@
             [education.db.home :as home]
             [education.db.signup :as signup]))
 
+(s/def ::error_message (s/or :error string?
+                             :success nil?))
 (s/def ::active-panel
   #{:home
     :article-index
@@ -12,8 +14,10 @@
   (s/keys :req-un
           [::active-panel
            ::home/home
-           ::signup/signup]))
+           ::signup/signup]
+          :opt-un [::error_message]))
 
 (def db  {:active-panel :home
+          :error_message nil
           :home home/default-db
           :signup signup/default-db})
