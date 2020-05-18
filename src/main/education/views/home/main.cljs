@@ -31,6 +31,7 @@
                  :spacing   5}
     [:> mui/Grid {:item true :xs 12 :md 6}
      [:> mui/Typography {:variant :h6 :gutterBottom true} "From the firehouse..."]
+     [:> mui/Divider]
      (for [post @(rf/subscribe [::subs/articles])]
        ^{:key (:id post)}
        [:div

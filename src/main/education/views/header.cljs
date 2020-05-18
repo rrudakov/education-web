@@ -25,15 +25,22 @@
 
 (defn auth-button
   []
-  (let [signup @(rf/subscribe [::subs/signup])
-        logged-in? (not (nil? (:token signup)))]
-    (if logged-in?
-      [:> mui/Button {:variant :outlined
-                      :size    :small
-                      :onClick #(rf/dispatch [::signup-events/logout])} "Logout"]
-      [:> mui/Button {:variant :outlined
-                      :size    :small
-                      :onClick #(rf/dispatch [::signup-events/open-signup])} "Sign in"])))
+  (if @(rf/subscribe [::subs/logged-in?])
+    [:> mui/Button {:variant :outlined
+                    :size    :small
+                    :onClick #(rf/dispatch [::signup-events/logout])} "Logout"]
+    [:> mui/Button {:variant :outlined
+                    :size    :small
+                    :onClick #(rf/dispatch [::signup-events/open-signup])} "Sign in"]))
+
+(defn new-post-button
+  []
+  (when @(rf/subscribe [::subs/logged-in?])
+    [:> mui/Button {:style {:margin-right 10}
+                    :variant :outlined
+                    :size :small
+                    :component :a
+                    :href (url-for :article-add)} "New post"]))
 
 (defn header-component
   "Plain header component."
@@ -49,6 +56,7 @@
                           :align     :center
                           :noWrap    true} title]
       [:> mui/IconButton [:> SearchIcon]]
+      [new-post-button]
       [auth-button]]
      [:> mui/Toolbar {:class     (.-toolbarSecondary classes)
                       :component :nav

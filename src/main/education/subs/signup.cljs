@@ -5,3 +5,9 @@
  ::signup
  (fn [db _]
    (:signup db)))
+
+(rf/reg-sub
+ ::logged-in?
+ :<- [::signup]
+ (fn [signup _]
+   (not (nil? (:token signup)))))

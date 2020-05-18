@@ -15,7 +15,8 @@
  ::set-error-message
  [check-spec-interceptor
   (rf/path [:error_message])]
- (fn [_ [_ new-error]] new-error))
+ (fn [_ [_ {:keys [response]}]]
+   (:message response)))
 
 (rf/reg-event-fx
  ::fetch-articles-list
@@ -26,29 +27,25 @@
                   :uri "http://educationapp-api.herokuapp.com/api/articles"
                   :response-format (ajax/json-response-format {:keywords? true})
                   :on-success [::articles-fetched-success]
-                  :on-failure [::articles-fetched-fail]}
+                  :on-failure [::set-error-message]}
                  {:method :get
                   :uri "http://educationapp-api.herokuapp.com/api/articles/featured/main"
                   :response-format (ajax/json-response-format {:keywords? true})
                   :on-success [::main-featured-article-fetched-success]
-                  :on-failure [::main-featured-article-fetched-fail]}]}))
+                  :on-failure [::set-error-message]}]}))
 
 (rf/reg-event-db
  ::articles-fetched-success
- [check-spec-interceptor
-  (rf/path :articles)]
- (fn [_ [_ result]] result))
-
-(rf/reg-event-db
- ::articles-fetched-fail
  [check-spec-interceptor]
- (fn [db _]
-   (assoc db :fetching true)))
+ (fn [db [_ result]]
+   (-> db
+       (assoc :fetching false)
+       (assoc-in [:home :articles] result))))
 
 (rf/reg-event-db
  ::main-featured-article-fetched-success
  [check-spec-interceptor
-  (rf/path :main-featured-article)]
+  (rf/path :home :main-featured-article)]
  (fn [_ [_ result]] result))
 
 (rf/reg-event-db

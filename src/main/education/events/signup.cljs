@@ -73,6 +73,6 @@
  [check-spec-interceptor
   (rf/path :signup)
   <-local-storage]
- (fn [{signup :db} [_ {:keys [response]}]]
+ (fn [{signup :db} [_ result]]
    {:db (dissoc signup :token)
-    :dispatch [::main-events/set-error-message (:message response)]}))
+    :dispatch [::main-events/set-error-message result]}))

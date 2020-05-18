@@ -1,8 +1,9 @@
 (ns education.views.main
   (:require ["@material-ui/core" :as mui :refer [createMuiTheme ThemeProvider]]
+            ["draft-js" :refer [convertFromRaw convertToRaw EditorState]]
             ["react-draft-wysiwyg" :refer [Editor]]
-            ["draft-js" :refer [EditorState convertFromRaw convertToRaw]]
             [education.subs.main :as subs]
+            [education.views.article.add :refer [new-post-component]]
             [education.views.error-message :refer [error-message]]
             [education.views.footer :refer [footer]]
             [education.views.header :refer [header]]
@@ -19,10 +20,11 @@
    {:title "Business"   :url "#"}
    {:title "Politics"   :url "#"}
    {:title "Opinion"    :url "#"}
-   {:title "Science"    :url "#"}
-   {:title "Health"     :url "#"}
-   {:title "Style"      :url "#"}
-   {:title "Travel"     :url "#"}])
+   ;; {:title "Science"    :url "#"}
+   ;; {:title "Health"     :url "#"}
+   ;; {:title "Style"      :url "#"}
+   ;; {:title "Travel"     :url "#"}
+   ])
 
 
 (def main-featured-post-item
@@ -39,13 +41,14 @@
   (createMuiTheme
    (clj->js
     {:palette
-     {:type :dark}})))
+     {:type :light}})))
 
 (defn- panels
   [panel-name]
   (case panel-name
     :home [home-component]
     :article-index [:div]
+    :article-add [new-post-component]
     :article [:div]
     :not-found [:div]))
 
@@ -73,11 +76,9 @@
    [:> mui/Container {:maxWidth :lg}
     [error-message]
     [signup-dialog]
-    ;; [readonly-editor]
     [header {:title    "Blog"
              :sections sections}]
-    [panels @(rf/subscribe [::subs/active-panel])]
-    [editor]]
+    [panels @(rf/subscribe [::subs/active-panel])]]
    [footer
     {:description "Some description"
      :title       "Footer title"}]])

@@ -6,6 +6,7 @@
 
 (def routes ["/" {"" :home
                   "articles/" {"" :article-index
+                               "add" :article-add
                               [:id] :article}
                   true :not-found}])
 
