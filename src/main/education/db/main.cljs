@@ -4,8 +4,10 @@
             [education.db.home :as home]
             [education.db.signup :as signup]))
 
-(s/def ::error_message (s/or :error string?
-                             :success nil?))
+(s/def ::error-message (s/or :error string?
+                             :nothing nil?))
+(s/def ::success-message (s/or :sucess string?
+                               :nothing nil?))
 (s/def ::active-panel
   #{:home
     :article-index
@@ -18,10 +20,11 @@
            ::home/home
            ::signup/signup
            ::article/article]
-          :opt-un [::error_message]))
+          :opt-un [::error-message]))
 
-(def db {:active-panel  :home
-         :error_message nil
-         :home          home/default-db
-         :signup        signup/default-db
-         :article       article/default-db})
+(def db {:active-panel    :home
+         :error-message   nil
+         :success-message nil
+         :home            home/default-db
+         :signup          signup/default-db
+         :article         article/default-db})

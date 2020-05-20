@@ -1,6 +1,8 @@
 (ns education.views.home.main-featured-post
   (:require ["@material-ui/core" :as mui]
             ["@material-ui/core/styles" :refer [withStyles]]
+            [education.routes :refer [url-for]]
+            [education.views.common :refer [circular-progress]]
             [goog.object :as g]
             [reagent.core :as r]))
 
@@ -39,21 +41,23 @@
   "Plain main featured post component."
   [{:keys [post]}]
   (fn [{:keys [classes]}]
-    [:> mui/Paper {:class (.-mainFeaturedPost classes)
-                   :style {:background-image (str "url(" (:featured_image post) ")")}}
-     [:div {:class (.-overlay classes)}]
-     [:> mui/Grid {:container true}
-      [:> mui/Grid {:item true :md 6}
-       [:div {:class (.-mainFeaturedPostContent classes)}
-        [:> mui/Typography {:component    :h1
-                            :variant      :h3
-                            :color        :inherit
-                            :gutterBottom true} (:title post)]
-        [:> mui/Typography {:variant   :h5
-                            :color     :inherit
-                            :paragraph true} "No post description..."]
-        [:> mui/Link {:variant :subtitle1
-                      :href    "#"} "Continue reading..."]]]]]))
+    (if (:fetching post)
+      [circular-progress]
+      [:> mui/Paper {:class (.-mainFeaturedPost classes)
+                    :style {:background-image (str "url(" (:featured_image post) ")")}}
+      [:div {:class (.-overlay classes)}]
+      [:> mui/Grid {:container true}
+       [:> mui/Grid {:item true :md 6}
+        [:div {:class (.-mainFeaturedPostContent classes)}
+         [:> mui/Typography {:component    :h1
+                             :variant      :h3
+                             :color        :inherit
+                             :gutterBottom true} (:title post)]
+         [:> mui/Typography {:variant   :h5
+                             :color     :inherit
+                             :paragraph true} "No post description..."]
+         [:> mui/Link {:variant :subtitle1
+                       :href    (url-for :article :article-id (:id post))} "Continue reading..."]]]]])))
 
 (defn main-featured-post
   "Main featured post component with custom styles."

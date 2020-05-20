@@ -7,14 +7,15 @@
 (def routes ["/" {"" :home
                   "articles/" {"" :article-index
                                "add" :article-add
-                              [:id] :article}
+                               [:article-id] :article}
                   true :not-found}])
 
 (defn- dispatch-route
   "Dispatch re-frame event when route changes."
   [matched-route]
-  (let [panel (:handler matched-route)]
-    (rf/dispatch [::events/set-active-panel panel])))
+  (rf/dispatch [::events/set-active-panel
+                {:panel      (:handler matched-route)
+                 :article-id (get-in matched-route [:route-params :article-id])}]))
 
 (defn app-routes
   "Setup application routes."

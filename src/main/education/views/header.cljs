@@ -4,9 +4,10 @@
             ["@material-ui/icons/Search" :default SearchIcon]
             [education.events.signup :as signup-events]
             [education.routes :refer [url-for]]
+            [education.subs.main :as main-subs]
+            [education.subs.signup :as subs]
             [re-frame.core :as rf]
-            [reagent.core :as r]
-            [education.subs.signup :as subs]))
+            [reagent.core :as r]))
 
 (defn header-styles
   "Define custom CSS for header."
@@ -48,7 +49,10 @@
   (fn [{:keys [classes] :as props}]
     [:<>
      [:> mui/Toolbar {:class (.-toolbar classes)}
-      [:> mui/Button {:size :small} "Subscribe"]
+      (if (not= :home @(rf/subscribe [::main-subs/active-panel]))
+        [:> mui/Button {:size :small
+                        :component :a
+                        :href (url-for :home)} "Back"])
       [:> mui/Typography {:class     (.-toolbarTitle classes)
                           :component :h2
                           :variant   :h5

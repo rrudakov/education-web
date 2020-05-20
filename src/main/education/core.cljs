@@ -14,5 +14,4 @@
 (defn init []
   (app-routes)
   (rf/dispatch-sync [::events/initialize-db])
-  (rf/dispatch [::events/fetch-articles-list])
   (mount-root))

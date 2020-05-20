@@ -1,8 +1,8 @@
-(ns education.views.error-message
+(ns education.views.message
   (:require ["@material-ui/core" :as mui]
             ["@material-ui/core/styles" :refer [withStyles]]
             ["@material-ui/lab/Alert" :default Alert]
-            [education.events.main :as events]
+            [education.events.common :as events]
             [education.subs.main :as subs]
             [re-frame.core :as rf]
             [reagent.core :as r]))
@@ -31,8 +31,29 @@
                    :onClose #(rf/dispatch [::events/set-error-message nil])
                    :severity :error} message]]])))
 
+(defn- success-message-component
+  "Successful message snack bar."
+  [& props]
+  (fn [{:keys [classes]}]
+    (let [message @(rf/subscribe [::subs/success-message])
+          open (not (nil? message))]
+      [:div {:class (.-root classes)}
+       [:> mui/Snackbar {:open open
+                         :autoHideDuration 6000
+                         :onClose #(rf/dispatch [::events/set-success-message nil])}
+        [:> Alert {:elevation 6
+                   :variant :filled
+                   :onClose #(rf/dispatch [::events/set-success-message nil])
+                   :severity :success} message]]])))
+
 (defn error-message
   []
   [:> (with-error-styles
         (r/reactify-component
          (error-message-component {})))])
+
+(defn success-message
+  []
+  [:> (with-error-styles
+        (r/reactify-component
+         (success-message-component {})))])

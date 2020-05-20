@@ -1,6 +1,7 @@
 (ns education.views.home.main
   (:require ["@material-ui/core" :as mui]
             [education.subs.home :as subs]
+            [education.views.common :refer [circular-progress]]
             [education.views.home.featured-post :refer [featured-post]]
             [education.views.home.main-featured-post :refer [main-featured-post]]
             [re-frame.core :as rf]))
@@ -32,8 +33,11 @@
     [:> mui/Grid {:item true :xs 12 :md 6}
      [:> mui/Typography {:variant :h6 :gutterBottom true} "From the firehouse..."]
      [:> mui/Divider]
-     (for [post @(rf/subscribe [::subs/articles])]
-       ^{:key (:id post)}
-       [:div
-        [:h1 (:title post)]
-        [:p (:updated_on post)]])]]])
+     (let [articles @(rf/subscribe [::subs/articles])]
+       (if (:fetching articles)
+         [circular-progress]
+         (for [article articles]
+           ^{:key (:id article)}
+           [:div
+            [:h1 (:title article)]
+            [:p (str (:updated_on article))]])))]]])

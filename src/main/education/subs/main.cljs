@@ -9,4 +9,9 @@
 (rf/reg-sub
  ::error-message
  (fn [db _]
-   (:error_message db)))
+   (:error-message db)))
+
+(rf/reg-sub
+ ::success-message
+ (fn [db _]
+   (:success-message db)))

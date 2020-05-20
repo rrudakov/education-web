@@ -4,7 +4,7 @@
              :refer
              [remove-token-from-local-storage token->local-storage]]
             [education.events.interceptors :refer [check-spec-interceptor]]
-            [education.events.main :as main-events]
+            [education.events.common :as common-events]
             [re-frame.core :as rf]))
 
 (rf/reg-event-db
@@ -75,4 +75,4 @@
   <-local-storage]
  (fn [{signup :db} [_ result]]
    {:db (dissoc signup :token)
-    :dispatch [::main-events/set-error-message result]}))
+    :dispatch [::common-events/set-error-message result]}))

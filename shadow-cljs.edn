@@ -28,4 +28,5 @@
         :devtools   {:preloads [day8.re-frame-10x.preload]
                      :watch-dir   "public"
                      :repl-pprint true}
+        ;; :closure-defines {cljs.core/*global* "window"}
         :release    {:compiler-options {:optimizations :simple}}}}}

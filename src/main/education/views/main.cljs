@@ -1,16 +1,14 @@
 (ns education.views.main
   (:require ["@material-ui/core" :as mui :refer [createMuiTheme ThemeProvider]]
-            ["draft-js" :refer [convertFromRaw convertToRaw EditorState]]
-            ["react-draft-wysiwyg" :refer [Editor]]
             [education.subs.main :as subs]
             [education.views.article.add :refer [new-post-component]]
-            [education.views.error-message :refer [error-message]]
+            [education.views.article.single :refer [single-article-component]]
             [education.views.footer :refer [footer]]
             [education.views.header :refer [header]]
             [education.views.home.main :refer [home-component]]
+            [education.views.message :refer [error-message success-message]]
             [education.views.signup.main :refer [signup-dialog]]
-            [re-frame.core :as rf]
-            [reagent.core :as r]))
+            [re-frame.core :as rf]))
 
 (def sections
   "Sections for main navigation."
@@ -19,12 +17,7 @@
    {:title "Culture"    :url "#"}
    {:title "Business"   :url "#"}
    {:title "Politics"   :url "#"}
-   {:title "Opinion"    :url "#"}
-   ;; {:title "Science"    :url "#"}
-   ;; {:title "Health"     :url "#"}
-   ;; {:title "Style"      :url "#"}
-   ;; {:title "Travel"     :url "#"}
-   ])
+   {:title "Opinion"    :url "#"}])
 
 
 (def main-featured-post-item
@@ -49,24 +42,8 @@
     :home [home-component]
     :article-index [:div]
     :article-add [new-post-component]
-    :article [:div]
+    :article [single-article-component]
     :not-found [:div]))
-
-(def editorState (r/atom (.createEmpty EditorState)))
-(def content (r/atom (.stringify js/JSON (convertToRaw (.getCurrentContent (.createEmpty EditorState))))))
-
-(defn readonly-editor
-  []
-  [:div
-   [:> Editor {:editorState (.createWithContent EditorState (convertFromRaw (.parse js/JSON @content)))
-               :toolbarHidden true
-               :readOnly true}]])
-
-(defn editor
-  []
-  [:> Editor {:editorState @editorState
-              :onChange #(reset! content (.stringify js/JSON (convertToRaw (.getCurrentContent @editorState))))
-              :onEditorStateChange #(reset! editorState %)}])
 
 (defn main-panel
   "Main application component."
@@ -75,8 +52,9 @@
    [:> mui/CssBaseline]
    [:> mui/Container {:maxWidth :lg}
     [error-message]
+    [success-message]
     [signup-dialog]
-    [header {:title    "Blog"
+    [header {:title    "Education portal"
              :sections sections}]
     [panels @(rf/subscribe [::subs/active-panel])]]
    [footer

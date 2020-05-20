@@ -1,9 +1,10 @@
 (ns education.events.article
-  (:require [ajax.core :as ajax]
+  (:require ["draft-js" :refer [convertFromRaw convertToRaw EditorState]]
+            [ajax.core :as ajax]
+            day8.re-frame.http-fx
+            [education.events.common :as common-events]
             [education.events.interceptors :refer [check-spec-interceptor]]
-            [education.events.main :as main-events]
-            [re-frame.core :as rf]
-            ["draft-js" :refer [convertFromRaw convertToRaw]]))
+            [re-frame.core :as rf]))
 
 (defn auth-header
   "Get user token and format for API authorization"
@@ -15,6 +16,11 @@
   "Convert `editor-state` to raw to save to database."
   [editor-state]
   (.stringify js/JSON (convertToRaw (.getCurrentContent editor-state))))
+
+(defn- to-editor-state
+  "Convert raw state to `EditorState` object."
+  [raw]
+  (.createWithContent EditorState (convertFromRaw (.parse js/JSON raw))))
 
 (rf/reg-event-db
  ::set-editor-title
@@ -57,5 +63,24 @@
                             :is_main_featured main-featured}
                    :timeout 30000
                    :response-format (ajax/json-response-format {:keywords? true})
-                   :on-success [::main-events/set-active-panel :home]
-                   :on-failure [::main-events/set-error-message]}})))
+                   :on-success [::common-events/set-success-message "Success!"]
+                   :on-failure [::common-events/set-error-message]}})))
+
+(rf/reg-event-fx
+ ::fetch-article
+ [check-spec-interceptor]
+ (fn [{:keys [db]} [_ article-id]]
+   {:db (-> db
+            (assoc-in [:article :single-article :fetching] true))
+    :http-xhrio {:method :get
+                 :uri (str "http://educationapp-api.herokuapp.com/api/articles/" article-id)
+                 :response-format (ajax/json-response-format {:keywords? true})
+                 :on-success [::article-fetched-success]
+                 :on-failure [::common-events/set-error-message]}}))
+
+(rf/reg-event-db
+ ::article-fetched-success
+ [check-spec-interceptor]
+ (fn [db [_ result]]
+   (->> (update (update result :body to-editor-state) :updated_on #(js/Date. %))
+        (assoc-in db [:article :single-article]))))

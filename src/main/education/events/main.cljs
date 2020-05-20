@@ -1,28 +1,27 @@
 (ns education.events.main
   (:require [ajax.core :as ajax]
-            [cljs.spec.alpha :as s]
             day8.re-frame.http-fx
             [education.db.main :as db]
+            [education.db.signup :refer [token-key]]
             [education.events.interceptors :refer [check-spec-interceptor]]
-            [re-frame.core :as rf]))
+            [re-frame.core :as rf]
+            [education.events.article :as article-events]))
 
-(rf/reg-event-db
+(rf/reg-event-fx
  ::initialize-db
- [check-spec-interceptor]
- (fn [_ _] db/db))
-
-(rf/reg-event-db
- ::set-error-message
- [check-spec-interceptor
-  (rf/path [:error_message])]
- (fn [_ [_ {:keys [response]}]]
-   (:message response)))
+ [(rf/inject-cofx ::local-storage-token)
+  check-spec-interceptor]
+ (fn [{:keys [db local-store-token]} _]
+   {:db (assoc-in db/db [:signup :token] local-store-token)}))
 
 (rf/reg-event-fx
  ::fetch-articles-list
  [check-spec-interceptor]
  (fn [{:keys [db]} _]
-   {:db (assoc db :fetching true)
+   {:db (-> db
+            (assoc-in [:home :articles :fetching] true)
+            (assoc-in [:home :main-featured-article :fetching] true)
+            (assoc-in [:home :article :fetching] true))
     :http-xhrio [{:method :get
                   :uri "http://educationapp-api.herokuapp.com/api/articles"
                   :response-format (ajax/json-response-format {:keywords? true})
@@ -38,24 +37,31 @@
  ::articles-fetched-success
  [check-spec-interceptor]
  (fn [db [_ result]]
-   (-> db
-       (assoc :fetching false)
-       (assoc-in [:home :articles] result))))
+   (->> result
+        (map #(update % :updated_on (fn [d] (js/Date. d))))
+        (assoc-in db [:home :articles]))))
 
 (rf/reg-event-db
  ::main-featured-article-fetched-success
  [check-spec-interceptor
-  (rf/path :home :main-featured-article)]
- (fn [_ [_ result]] result))
+  (rf/path [:home :main-featured-article])]
+ (fn [mf-article [_ result]]
+   (update result :updated_on #(js/Date. %))))
 
-(rf/reg-event-db
- ::main-featured-article-fetched-fail
- [check-spec-interceptor]
- (fn [db _]
-   (assoc db :fetching true)))
-
-(rf/reg-event-db
+(rf/reg-event-fx
  ::set-active-panel
  [check-spec-interceptor]
- (fn [db [_ panel]]
-   (assoc db :active-panel panel)))
+ (fn [{:keys [db]} [_ {:keys [panel article-id]}]]
+   (let [set-page (assoc db :active-panel panel)]
+     (case panel
+       :home {:db set-page
+              :dispatch [::fetch-articles-list]}
+       :article {:db set-page
+                 :dispatch [::article-events/fetch-article article-id]}
+       {:db set-page}))))
+
+(rf/reg-cofx
+ ::local-storage-token
+ (fn [cofx _]
+   (assoc cofx :local-store-token
+          (.getItem js/localStorage token-key))))

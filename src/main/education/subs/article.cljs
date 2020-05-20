@@ -7,6 +7,11 @@
    (get-in db [:article :new-article])))
 
 (rf/reg-sub
+ ::single-article
+ (fn [db _]
+   (get-in db [:article :single-article])))
+
+(rf/reg-sub
  ::editor-state
  :<- [::new-article]
  (fn [new-article _]
