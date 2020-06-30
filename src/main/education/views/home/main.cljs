@@ -4,7 +4,8 @@
             [education.views.common :refer [circular-progress]]
             [education.views.home.featured-post :refer [featured-post]]
             [education.views.home.main-featured-post :refer [main-featured-post]]
-            [re-frame.core :as rf]))
+            [re-frame.core :as rf]
+            ["react-draft-wysiwyg" :refer [Editor]]))
 
 (def featured-posts
   "Secondary featured posts."
@@ -33,11 +34,13 @@
     [:> mui/Grid {:item true :xs 12 :md 6}
      [:> mui/Typography {:variant :h6 :gutterBottom true} "From the firehouse..."]
      [:> mui/Divider]
-     (let [articles @(rf/subscribe [::subs/articles])]
+     (let [articles @(rf/subscribe [::subs/full-sized-articles])]
        (if (:fetching articles)
          [circular-progress]
          (for [article articles]
            ^{:key (:id article)}
            [:div
-            [:h1 (:title article)]
-            [:p (str (:updated_on article))]])))]]])
+            [:> mui/Typography {:variant :h3} (:title article)]
+            [:> Editor {:editorState (:body article)
+                        :toolbarHidden true
+                        :readOnly true}]])))]]])

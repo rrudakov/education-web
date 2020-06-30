@@ -1,9 +1,9 @@
 (ns education.events.article
-  (:require ["draft-js" :refer [convertFromRaw convertToRaw EditorState]]
-            [ajax.core :as ajax]
+  (:require [ajax.core :as ajax]
             day8.re-frame.http-fx
             [education.events.common :as common-events]
             [education.events.interceptors :refer [check-spec-interceptor]]
+            [education.utils.editor :refer [raw-editor-state to-editor-state]]
             [re-frame.core :as rf]))
 
 (defn auth-header
@@ -11,16 +11,6 @@
   [db]
   (when-let [token (get-in db [:signup :token])]
     [:Authorization (str "Token " token)]))
-
-(defn- raw-editor-state
-  "Convert `editor-state` to raw to save to database."
-  [editor-state]
-  (.stringify js/JSON (convertToRaw (.getCurrentContent editor-state))))
-
-(defn- to-editor-state
-  "Convert raw state to `EditorState` object."
-  [raw]
-  (.createWithContent EditorState (convertFromRaw (.parse js/JSON raw))))
 
 (rf/reg-event-db
  ::set-editor-title
