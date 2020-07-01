@@ -30,7 +30,7 @@
 (s/def ::main-featured-article
   (s/or :fetched ::short-article
         :fetching (s/keys :req-un [::fetching])))
-(s/def ::articles
+(s/def ::featured-articles
   (s/or :fetched (s/coll-of ::short-article)
         :fetching (s/keys :req-un [::fetching])))
 (s/def ::full-sized-articles
@@ -38,10 +38,10 @@
         :fetching (s/keys :req-un [::fetching])))
 (s/def ::home
   (s/keys :req-un
-          [::article
+          [::featured-articles
            ::full-sized-articles
            ::main-featured-article]))
 (def default-db
-  {:article {:fetching true}
+  {:featured-articles {:fetching true}
    :full-sized-articles {:fetching true}
    :main-featured-article {:fetching true}})

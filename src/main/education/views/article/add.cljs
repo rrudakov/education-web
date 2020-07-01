@@ -11,7 +11,6 @@
   "Post editor component."
   []
   [:> Editor {:editorState @(rf/subscribe [::subs/editor-state])
-              ;; :onChange #(reset! content (.stringify js/JSON (convertToRaw (.getCurrentContent @editorState))))
               :onEditorStateChange #(rf/dispatch [::article-events/set-editor-state %])}])
 
 (defn- new-post-form
@@ -42,6 +41,16 @@
      :helperText "Required (this will appear only on main page)"
      :value @(rf/subscribe [::subs/new-article-main-featured-image])
      :onChange #(rf/dispatch [::article-events/set-new-article-main-featured-image (-> % .-target .-value)])
+     :fullWidth true
+     :margin :normal
+     :InputLabelProps {:shrink true}}]
+   [:> mui/TextField
+    {:id :new-post-description
+     :label "Post description"
+     :placeholder "Put post description here..."
+     :helperText "Optional (this will be rendered on featured cards)"
+     :value @(rf/subscribe [::subs/new-article-description])
+     :onChange #(rf/dispatch [::article-events/set-description (-> % .-target .-value)])
      :fullWidth true
      :margin :normal
      :InputLabelProps {:shrink true}}]])

@@ -37,12 +37,18 @@
  (fn [main-featured [_ _]]
    (not main-featured)))
 
+(rf/reg-event-db
+ ::set-description
+ [check-spec-interceptor
+  (rf/path [:article :new-article :description])]
+ (fn [_ [_ description]] description))
+
 (rf/reg-event-fx
  ::post-article
  [check-spec-interceptor]
  (fn [{:keys [db]} _]
    (let [new-article (get-in db [:article :new-article])
-         {:keys [title editor-state main-featured main-featured-image]} new-article]
+         {:keys [title editor-state main-featured main-featured-image description]} new-article]
      {:http-xhrio {:method :post
                    :uri "http://educationapp-api.herokuapp.com/api/articles"
                    :format (ajax/json-request-format)
@@ -50,7 +56,8 @@
                    :params {:title title
                             :body (raw-editor-state editor-state)
                             :featured_image main-featured-image
-                            :is_main_featured main-featured}
+                            :is_main_featured main-featured
+                            :description description}
                    :timeout 30000
                    :response-format (ajax/json-response-format {:keywords? true})
                    :on-success [::common-events/set-success-message "Success!"]
@@ -61,7 +68,7 @@
  [check-spec-interceptor]
  (fn [{:keys [db]} [_ article-id]]
    {:db (-> db
-            (assoc-in [:article :single-article :fetching] true))
+            (assoc-in [:article :single-article] {:fetching true}))
     :http-xhrio {:method :get
                  :uri (str "http://educationapp-api.herokuapp.com/api/articles/" article-id)
                  :response-format (ajax/json-response-format {:keywords? true})

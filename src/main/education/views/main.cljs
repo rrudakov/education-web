@@ -19,15 +19,6 @@
    {:title "Politics"   :url "#"}
    {:title "Opinion"    :url "#"}])
 
-
-(def main-featured-post-item
-  "Main featured post"
-  {:title "Main featured post"
-   :description "Long description for main featured posts."
-   :image "https://source.unsplash.com/random"
-   :image-text "main image description"
-   :link-text "Continue reading..."})
-
 (defn theme
   "Define custom Material-UI theme."
   []
@@ -37,6 +28,7 @@
      {:type :light}})))
 
 (defn- panels
+  "Render panel depends on `panel-name`."
   [panel-name]
   (case panel-name
     :home [home-component]

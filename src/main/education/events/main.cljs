@@ -20,9 +20,9 @@
  [check-spec-interceptor]
  (fn [{:keys [db]} _]
    {:db         (-> db
-                    (assoc-in [:home :full-sized-articles :fetching] true)
-                    (assoc-in [:home :main-featured-article :fetching] true)
-                    (assoc-in [:home :article :fetching] true))
+                    (assoc-in [:home :full-sized-articles] {:fetching true})
+                    (assoc-in [:home :main-featured-article] {:fetching true})
+                    (assoc-in [:home :featured-articles] {:fetching true}))
     :http-xhrio [{:method          :get
                   :uri             "http://educationapp-api.herokuapp.com/api/articles/latest"
                   :response-format (ajax/json-response-format {:keywords? true})
@@ -33,7 +33,13 @@
                   :uri             "http://educationapp-api.herokuapp.com/api/articles/featured/main"
                   :response-format (ajax/json-response-format {:keywords? true})
                   :on-success      [::main-featured-article-fetched-success]
-                  :on-failure      [::set-error-message]}]}))
+                  :on-failure      [::set-error-message]}
+                 {:method          :get
+                  :uri             "http://educationapp-api.herokuapp.com/api/articles/featured/latest"
+                  :response-format (ajax/json-response-format {:keywords? true})
+                  :params          {:limit 2}
+                  :on-success      [::articles-fetched-success]
+                  :on-failure      [::ser-error-message]}]}))
 
 (defn to-full-sized-article
   [{:keys [updated_on created_on body] :as article}]
@@ -41,6 +47,11 @@
       (assoc :updated_on (js/Date. updated_on))
       (assoc :created_on (js/Date. created_on))
       (assoc :body (to-editor-state body))))
+
+(defn to-short-article
+  [{:keys [updated_on] :as article}]
+  (-> article
+      (assoc :updated_on (js/Date. updated_on))))
 
 (rf/reg-event-db
  ::latest-articles-fetched-success
@@ -56,6 +67,13 @@
   (rf/path [:home :main-featured-article])]
  (fn [_ [_ result]]
    (update result :updated_on #(js/Date. %))))
+
+(rf/reg-event-db
+ ::articles-fetched-success
+ [check-spec-interceptor
+  (rf/path [:home :featured-articles])]
+ (fn [_ [_ result]]
+   (map to-short-article result)))
 
 (rf/reg-event-fx
  ::set-active-panel

@@ -34,3 +34,9 @@
  :<- [::new-article]
  (fn [new-article _]
    (:main-featured new-article)))
+
+(rf/reg-sub
+ ::new-article-description
+ :<- [::new-article]
+ (fn [new-article _]
+   (:description new-article)))

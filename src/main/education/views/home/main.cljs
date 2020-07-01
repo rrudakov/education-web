@@ -26,9 +26,12 @@
    [main-featured-post @(rf/subscribe [::subs/main-featured-article])]
    [:> mui/Grid {:container true
                  :spacing   4}
-    (for [post featured-posts]
-      ^{:key (:title post)}
-      [featured-post post])]
+    (let [featured-posts @(rf/subscribe [::subs/featured-articles])]
+      (if (:fetching featured-posts)
+        [circular-progress]
+        (for [post featured-posts]
+         ^{:key (:id post)}
+         [featured-post post])))]
    [:> mui/Grid {:container true
                  :spacing   5}
     [:> mui/Grid {:item true :xs 12 :md 6}
@@ -40,7 +43,7 @@
          (for [article articles]
            ^{:key (:id article)}
            [:div
-            [:> mui/Typography {:variant :h3} (:title article)]
+            [:> mui/Typography {:variant :h5} (:title article)]
             [:> Editor {:editorState (:body article)
                         :toolbarHidden true
                         :readOnly true}]])))]]])

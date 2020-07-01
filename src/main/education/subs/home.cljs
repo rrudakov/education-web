@@ -10,3 +10,8 @@
  ::main-featured-article
  (fn [db _]
    (get-in db [:home :main-featured-article])))
+
+(rf/reg-sub
+ ::featured-articles
+ (fn [db _]
+   (get-in db [:home :featured-articles])))

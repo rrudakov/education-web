@@ -55,7 +55,8 @@
                              :gutterBottom true} (:title post)]
          [:> mui/Typography {:variant   :h5
                              :color     :inherit
-                             :paragraph true} "No post description..."]
+                             :paragraph true} (or (:description post)
+                                                  "No description.")]
          [:> mui/Link {:variant :subtitle1
                        :href    (url-for :article :article-id (:id post))} "Continue reading..."]]]]])))
 

@@ -8,11 +8,13 @@
 (s/def ::body ::editor-state)
 (s/def ::main-featured boolean?)
 (s/def ::main-featured-image (s/and string? #(< (count %) 200)))
+(s/def ::description string?)
 (s/def ::new-article
   (s/keys :req-un
           [::title
            ::editor-state
            ::main-featured
+           ::description
            ::main-featured-image]))
 (s/def ::single-article
   (s/or :fetched (s/keys :req-un
@@ -26,6 +28,7 @@
    {:title ""
     :editor-state (.createEmpty EditorState)
     :main-featured false
+    :description ""
     :main-featured-image ""}
    :single-article
    {:fetching true}})
