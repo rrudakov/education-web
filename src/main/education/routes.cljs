@@ -17,9 +17,16 @@
                 {:panel      (:handler matched-route)
                  :article-id (get-in matched-route [:route-params :article-id])}]))
 
+(def history
+  (pushy/pushy dispatch-route (partial bidi/match-route routes)))
+
 (defn app-routes
   "Setup application routes."
   []
-  (pushy/start! (pushy/pushy dispatch-route (partial bidi/match-route routes))))
+  (pushy/start! history))
 
 (def url-for (partial bidi/path-for routes))
+
+(defn redirect-to
+  [url]
+  (pushy/set-token! history url))

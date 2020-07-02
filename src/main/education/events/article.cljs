@@ -60,7 +60,7 @@
                             :description description}
                    :timeout 30000
                    :response-format (ajax/json-response-format {:keywords? true})
-                   :on-success [::common-events/set-success-message "Success!"]
+                   :on-success [::post-article-success]
                    :on-failure [::common-events/set-error-message]}})))
 
 (rf/reg-event-fx
@@ -81,3 +81,15 @@
  (fn [db [_ result]]
    (->> (update (update result :body to-editor-state) :updated_on #(js/Date. %))
         (assoc-in db [:article :single-article]))))
+
+;; TODO: fix it
+(rf/reg-fx
+ ::set-url
+ (fn [{:keys [url]}]
+   (education.routes/redirect-to url)))
+
+(rf/reg-event-fx
+ ::post-article-success
+ [check-spec-interceptor]
+ (fn [_ [_ {:keys [id]}]]
+   {::set-url {:url (education.routes/url-for :article :article-id id)}}))

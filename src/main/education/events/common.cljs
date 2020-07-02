@@ -4,10 +4,14 @@
 
 (rf/reg-event-db
  ::set-error-message
- [check-spec-interceptor
-  (rf/path [:error-message])]
- (fn [_ [_ {:keys [response]}]]
-   (:message response)))
+ [check-spec-interceptor]
+ (fn [db [_ {:keys [status response]}]]
+   (if (= status 401)
+     (-> db
+         (update :signup dissoc :token)
+         (assoc :error-message (:message response)))
+     (-> db
+         (assoc :error-message (:message response))))))
 
 (rf/reg-event-db
  ::set-success-message
